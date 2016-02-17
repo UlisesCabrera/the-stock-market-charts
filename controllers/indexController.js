@@ -7,15 +7,10 @@ module.exports =  function(io) {
     controller.serveHome = function(req, res, next) {
         //start listen with socket.io
         io.on('connection', function(socket){
-            console.log('a user connected');
-            socket.emit('news', { hello: 'world' });
-            socket.on('my other event', function (data) {
-                console.log(data);
-            });                
+            socket.emit('hello', { message: 'Web Socket Connection Active'});
         });
         
-        
-        res.render('index', { title: 'Express', baseURL: process.env.BASEURL});
+        res.render('index', { title: 'Stock Market Tracker', baseURL: process.env.BASEURL});
     };
     
     return controller;

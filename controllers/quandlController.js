@@ -13,6 +13,7 @@ module.exports =  function(io) {
             source: 'WIKI',
             table: req.params.stock
         };
+        
         var params = {
           order: "asc",
           exclude_column_names: true,
@@ -29,7 +30,7 @@ module.exports =  function(io) {
                 res.send({status:'failure',data: null});
             } else {
                 if (response) {
-                    res.send({status:'success',data: response});
+                    res.send({status:'success', data: response});
                 } else {
                     res.send({status:'failure',data: null});                    
                 }

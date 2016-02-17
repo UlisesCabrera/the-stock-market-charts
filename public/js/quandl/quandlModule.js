@@ -1,0 +1,1 @@
+angular.module('QuandlModule',['ngResource']).constant('baseURL', window.baseURL);
