@@ -3,6 +3,7 @@ require('dotenv').load();
 
 module.exports =  function(io) {
     var controller = {};
+    
     controller.serveHome = function(req, res, next) {
         //start listen with socket.io
         io.on('connection', function(socket){
@@ -12,8 +13,10 @@ module.exports =  function(io) {
                 console.log(data);
             });                
         });
+        
+        
         res.render('index', { title: 'Express', baseURL: process.env.BASEURL});
     };
-        
+    
     return controller;
 };

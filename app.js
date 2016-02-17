@@ -28,9 +28,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-var routes = require('./routes/index')(app.io);
+var indexRoute = require('./routes/index')(app.io);
+var quandlRoute = require('./routes/quandlRoute.js')(app.io);
 
-app.use('/', routes);
+app.use('/', indexRoute);
+app.use('/quandl', quandlRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

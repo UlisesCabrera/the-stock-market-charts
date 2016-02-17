@@ -3,10 +3,9 @@ var router = express.Router();
 
 module.exports = function(io) {
     // passing the io object to the controller
-    var indexCtrl = require("../controllers/indexController.js")(io);
+    var quandlCtrl = require("../controllers/quandlController.js")(io);
     
-    /* GET home page. */
-    router.get('/', indexCtrl.serveHome);
+    router.get('/:stock', quandlCtrl.stocksData);
     
     return router;
 };
