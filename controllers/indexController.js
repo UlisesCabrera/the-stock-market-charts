@@ -20,7 +20,7 @@ module.exports =  function(io) {
                     var stocksCollection = db.collection('stocks');
                     stocksCollection.find().toArray(function(err, allStocks){
                         assert.equal(err, null);
-                        socket.emit('stocksUpdated', { message: 'Web Socket Connection Active', data: allStocks});
+                        socket.emit('initialStocks', { message: 'Web Socket Connection Active', data: allStocks});
                         db.close();
                     });                
                     

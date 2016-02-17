@@ -49,7 +49,7 @@ module.exports =  function(io) {
                                 assert.equal(err, null);
                                 // if it is, do nothing and send a notification to the user
                                 if (stocks.length > 0){
-                                   res.send({status:'Already on the database'});
+                                   res.send({status:'stock already on the db'});
                                    db.close();
                                 // else insert new stock to the collection and send the new stocks collection to the user   
                                 } else {
@@ -59,15 +59,9 @@ module.exports =  function(io) {
                                     // insert new document
                                     stocksCollection.insert(dataset, function(err){
                                         assert.equal(err, null);
-                                        
-                                        // then send updated collection back to the client via io socket
-                                        stocksCollection.find().toArray(function(err, allStocks){
-                                            assert.equal(err, null);
-                                            
-                                            res.send({status:'saved to the db'});
-                                            io.emit('stocksUpdated', {data: allStocks});
-                                            db.close();
-                                        });
+                                        res.send({status:'new stock added to the db'});
+                                        io.emit('newStockAdded', {data: dataset});
+                                        db.close();
                                     });                                    
                                 }
                             });

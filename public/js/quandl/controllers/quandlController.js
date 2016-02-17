@@ -8,11 +8,18 @@ angular.module('QuandlModule')
         // will hold stocks array of objects
         $scope.stocks = [];
         
-        // listens for updates on the stocks collection. 
-        ioFactory.on('stocksUpdated', function(message){
+        // listens for initialStocks event and add all stocks on db to the array.
+        ioFactory.on('initialStocks', function(message){
             $scope.$apply(function(){
                $scope.stocks = message.data;
                console.log($scope.stocks);
+            });
+        });
+        
+        // listens for newStockAddedevent and push stock the the array.
+        ioFactory.on('newStockAdded', function(message){
+            $scope.$apply(function(){
+               $scope.stocks.push(message.data);
             });
         });
         
