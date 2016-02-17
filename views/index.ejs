@@ -32,8 +32,19 @@
             
               <h1>{{ hello }}</h1>
               <p>Welcome to <%= title %></p>
-              <button ng-click="sendMessage()" style="btn btn-primary"> EMIT</button>
+              
+              <form ng-submit="getNewStock()">
+                <div class="form-group">
+                    <label for="CompanyCode">Company Code</label>
+                    <input type="text" class="form-control" id="CompanyCode" placeholder="Company Code" ng-model="newStocks.code">
+                  </div>
+                <button type="submit" class="btn btn-success">Get Stocks</button>
+              </form>
+
               <p>{{ message }}</p>
+              <ul>
+                <li ng-repeat="stock in stocks">{{stock.name}}</li>
+              </ul>
           </div>
         </div>
     </div>

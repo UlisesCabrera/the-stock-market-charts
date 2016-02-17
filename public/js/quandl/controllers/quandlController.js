@@ -1,16 +1,35 @@
 angular.module('QuandlModule')
     .controller('QuandlController',['$scope','quandlFactory','ioFactory', function($scope, quandlFactory, ioFactory){
+        // binded to the form
+        $scope.newStocks = {
+            code: ''
+        };
         
-        $scope.hello = 'Hello from controller';
+        // will hold stocks array of objects
+        $scope.stocks = [];
         
-        ioFactory.on('hello', function(data){
+        // listens for updates on the stocks collection. 
+        ioFactory.on('stocksUpdated', function(message){
             $scope.$apply(function(){
-               $scope.message = data.message; 
+               $scope.stocks = message.data;
+               console.log($scope.stocks);
             });
         });
         
-        $scope.sendMessage = function() {
-          ioFactory.emit('my other event', { my: 'hello from service' });  
+        $scope.getNewStock = function() {
+            quandlFactory.get({stockCode: $scope.newStocks.code})
+                .$promise
+                    .then(
+                        function(results){
+                            // show message status of action on the view and clear form
+                            $scope.message = results.status;
+                            $scope.newStocks.code = '';
+                        },
+                        function(err) {
+                            if(err) {
+                                console.error(err);
+                            }
+                        }
+                );
         };
-    
 }]);
