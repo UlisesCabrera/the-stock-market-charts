@@ -23,13 +23,25 @@ angular.module('QuandlModule')
             });
         });
         
+        // listens for the stock deleted event and deletes the local copy 
+        ioFactory.on('stockDeleted', function(message){
+            console.log('message received');
+            $scope.$apply(function(){
+                $scope.stocks.forEach(function(stock, idx){
+                    if (stock.id === message.data) {
+                        $scope.stocks.splice(idx, 1);
+                    }
+                });                
+            }); 
+        });
+        
         $scope.getNewStock = function() {
             quandlFactory.get({stockCode: $scope.newStocks.code})
                 .$promise
                     .then(
                         function(results){
                             // show message status of action on the view and clear form
-                            $scope.message = results.status;
+                            $scope.message = results.message;
                             $scope.newStocks.code = '';
                         },
                         function(err) {
@@ -38,5 +50,28 @@ angular.module('QuandlModule')
                             }
                         }
                 );
+        };
+        
+        $scope.deleteStock = function(id) {
+            // deletes local copy
+            $scope.stocks.forEach(function(stock, idx){
+                if (stock.id === id) {
+                    $scope.stocks.splice(idx, 1);
+                }
+            });
+            
+            // deletes db copy
+            quandlFactory.delete({stockCode: id})
+                .$promise
+                    .then(
+                        function(results) {
+                          $scope.message = results.message;  
+                        }, 
+                        function(err){
+                            if(err) {
+                                console.error(err);
+                            }
+                        }
+                    );
         };
 }]);

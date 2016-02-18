@@ -43,7 +43,10 @@
 
               <p>{{ message }}</p>
               <ul>
-                <li ng-repeat="stock in stocks">{{stock.name}}</li>
+                <li ng-repeat="stock in stocks">
+                  <h3>{{stock.name}}</h3>
+                  <button ng-click="deleteStock(stock._id)">remove</button>
+                </li>
               </ul>
           </div>
         </div>

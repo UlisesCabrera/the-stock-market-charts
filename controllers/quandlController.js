@@ -10,7 +10,7 @@ var quandl = new Quandl({
 module.exports =  function(io) {
     var quandlController = {};
     
-    quandlController.stocksData = function(req, res, next) {
+    quandlController.newStockData = function(req, res, next) {
         
         var query =  {
             source: 'WIKI',
@@ -49,7 +49,7 @@ module.exports =  function(io) {
                                 assert.equal(err, null);
                                 // if it is, do nothing and send a notification to the user
                                 if (stocks.length > 0){
-                                   res.send({status:'stock already on the db'});
+                                   res.send({message:'new stock added to the db', status:'NO'});
                                    db.close();
                                 // else insert new stock to the collection and send the new stocks collection to the user   
                                 } else {
@@ -59,7 +59,7 @@ module.exports =  function(io) {
                                     // insert new document
                                     stocksCollection.insert(dataset, function(err){
                                         assert.equal(err, null);
-                                        res.send({status:'new stock added to the db'});
+                                        res.send({message:'new stock added to the db', status:'OK'});
                                         io.emit('newStockAdded', {data: dataset});
                                         db.close();
                                     });                                    
@@ -70,10 +70,44 @@ module.exports =  function(io) {
                     });
                 } else {
                     // if the response from the API was null, send status to client
-                    res.send({status:'No response from Quandl API',data: null});                    
+                    res.send({message:'No response from Quandl API', status:'NO', data: null});                    
                 }
         }); 
     };
+    
+    
+    quandlController.deleteStock = function(req, res, next){
+         
+         // need to conver to int in order to find id on collection
+         var stockId = parseInt(req.params.stockId);
+         
+         
+         MongoClient.connect(process.env.MONGOURI, function(err, db){
+            if (err) {
+                console.error(err);
+                //is connected to the database
+            } else {
+                var stocksCollection = db.collection('stocks');
+                
+                
+                stocksCollection.deleteOne({_id: stockId}, function(err, result){
+                    assert.equal(err, null);
+                    // only delete stocks on other client if it was ok on the db.
+                    if (result.deletedCount === 1) {
+                         // updates all the connected clients
+                        io.emit('stockDeleted', {data: stockId});                     
+                        // send response to the http request
+                        res.send({message:'stock deleted from DB' , status:'OK'});
+                        db.close();
+                    } else {
+                        res.send({message:'stock NOT deleted from DB', status:'NO'});
+                        db.close();
+                    }     
+                });
+            }
+         });
+    };
+    
     
     return quandlController;    
 };
