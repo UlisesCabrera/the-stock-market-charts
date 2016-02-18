@@ -1,15 +1,5 @@
 angular.module('QuandlModule')
     .controller('QuandlController',['$scope','quandlFactory','ioFactory', function($scope, quandlFactory, ioFactory){
-    
-        function initChartData() {
-            $scope.stocks.forEach(function(stock, idx){
-                stock.data.forEach(function(data, idx){
-                   data[0] = new Date(data[0]).getTime(); 
-                });
-                $scope.chartConfig.series.push({name: stock.dataset_code, data: stock.data });
-            });
-        }    
-    
         $scope.chartConfig = {
             options: {
                 chart: {
@@ -38,8 +28,15 @@ angular.module('QuandlModule')
                 .then(
                     function(results){
                         $scope.stocks = results.data;
+                        
                         // inits the chart after it gets the results from the database.
-                        initChartData();
+                        $scope.stocks.forEach(function(stock, idx){
+                            //formats date on data array
+                            stock.data.forEach(function(data, idx){
+                               data[0] = new Date(data[0]).getTime(); 
+                            });
+                         $scope.chartConfig.series.push({name: stock.dataset_code, data: stock.data });
+                        });
                     }, 
                     function(err){
                         console.log(err);
@@ -56,7 +53,17 @@ angular.module('QuandlModule')
         // listens for newStockAddedevent and push stock the the array.
         ioFactory.on('newStockAdded', function(message){
             $scope.$apply(function(){
-               $scope.stocks.push(message.data);
+                // adds the new stock to the stocks array
+                $scope.stocks.push(message.data);
+               
+                //formats date on data array
+                message.data.data.forEach(function(data, idx){
+                   data[0] = new Date(data[0]).getTime(); 
+                });
+                
+                // adds the new stock to the chart data array
+                $scope.chartConfig.series.push({name: message.data.dataset_code, data: message.data.data });
+                
             });
         });
         
@@ -67,6 +74,12 @@ angular.module('QuandlModule')
                 $scope.stocks.forEach(function(stock, idx){
                     if (stock.id === message.data) {
                         $scope.stocks.splice(idx, 1);
+                        
+                        $scope.chartConfig.series.forEach(function(serie, idx){
+                            if (serie.name === stock.dataset_code) {
+                                 $scope.chartConfig.series.splice(idx, 1);
+                            }
+                        });                        
                     }
                 });                
             }); 
@@ -78,7 +91,20 @@ angular.module('QuandlModule')
             $scope.$apply(function(){
                 $scope.stocks.forEach(function(stock, idx){
                     if (stock.id === message.data._id) {
+                        //updates stocks array
                         $scope.stocks.splice(idx, 1, message.data);
+                        
+                        //updates chart data
+                        $scope.chartConfig.series.forEach(function(serie, idx){
+                            if (serie.name === message.data.dataset_code) {
+                                //formats date on data array
+                                message.data.data.forEach(function(data, idx){
+                                    data[0] = new Date(data[0]).getTime(); 
+                                });
+                                // makes the update
+                                $scope.chartConfig.series.splice(idx, 1, message.data.data);
+                            }
+                        });
                     }
                 });                
             }); 
@@ -106,6 +132,12 @@ angular.module('QuandlModule')
             $scope.stocks.forEach(function(stock, idx){
                 if (stock.id === id) {
                     $scope.stocks.splice(idx, 1);
+                    
+                    $scope.chartConfig.series.forEach(function(serie, idx){
+                        if (serie.name === stock.dataset_code) {
+                             $scope.chartConfig.series.splice(idx, 1);
+                        }
+                    });                    
                 }
             });
             
