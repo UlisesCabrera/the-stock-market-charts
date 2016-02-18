@@ -1,30 +1,49 @@
+
 require('dotenv').load();
 var Quandl = require("quandl");
 var MongoClient = require("mongodb").MongoClient;
 var assert = require("assert");
 
+
+// function to get date on the format required.
+function formatDate(date) {
+    var d = date ? new Date(date) : new Date(),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 var quandl = new Quandl({
     auth_token: process.env.QUANDL_API_KEY
 });
+
+var params = {
+  order: "asc",
+  exclude_column_names: true,
+  // Notice the YYYY-MM-DD format
+  start_date: "2015-01-01",
+  end_date: formatDate(),
+  column_index: 4,
+  format: 'json'
+};
+
+var query =  {
+    source: 'WIKI',
+    table: ' '   // the stock code comes from the client
+};
 
 module.exports =  function(io) {
     var quandlController = {};
     
     quandlController.newStockData = function(req, res, next) {
         
-        var query =  {
-            source: 'WIKI',
-            table: req.params.stock // the stock code comes from the client via the params object
-        };
-        var params = {
-          order: "asc",
-          exclude_column_names: true,
-          // Notice the YYYY-MM-DD format
-          start_date: "2015-01-30",
-          end_date: "2016-01-29",
-          column_index: 4,
-          format: 'json'
-        };
+        // the stock code comes from the client via the params object
+        query.table = req.params.stock; 
         
         // make call to Quandl API
         quandl.dataset(query, params, function(err, response){
@@ -55,6 +74,7 @@ module.exports =  function(io) {
                                 } else {
                                     //setting mongo id to the data set id
                                     dataset._id = dataset.id;
+                                    dataset.pulledDate = new Date();
                                     
                                     // insert new document
                                     stocksCollection.insert(dataset, function(err){
@@ -81,7 +101,6 @@ module.exports =  function(io) {
          // need to conver to int in order to find id on collection
          var stockId = parseInt(req.params.stockId);
          
-         
          MongoClient.connect(process.env.MONGOURI, function(err, db){
             if (err) {
                 console.error(err);
@@ -98,16 +117,64 @@ module.exports =  function(io) {
                         io.emit('stockDeleted', {data: stockId});                     
                         // send response to the http request
                         res.send({message:'stock deleted from DB' , status:'OK'});
-                        db.close();
                     } else {
                         res.send({message:'stock NOT deleted from DB', status:'NO'});
-                        db.close();
-                    }     
+                    }
+                    db.close();
                 });
             }
          });
     };
     
+    
+    quandlController.updateStock = function(req,res,next){
+        var stockId = parseInt(req.params.stockId);
+        
+        // the stock code comes from the client via the body object
+        query.table = req.body.stockName; 
+        
+        // make call to Quandl API
+        quandl.dataset(query, params, function(err, response){
+            assert.equal(err, null);
+                // if there is a response from the API, do the following:
+                if (response) {
+                    
+                    // Step1: connect to mongo.
+                    MongoClient.connect(process.env.MONGOURI, function(err, db){
+                        if (err) {
+                            console.error(err);
+                        //is connected to the database
+                        } else {
+                            // Step 2: create or access the collection stocks.
+                            var stocksCollection = db.collection('stocks');
+                            // Step 3: parse response from the api, assigning id and pulled date
+                            var dataset = JSON.parse(response).dataset;
+                            dataset._id = dataset.id;
+                            dataset.pulledDate = new Date();
+                            
+                            // Step 4: find the old one and replace it
+                            stocksCollection.findOneAndReplace({_id: stockId}, dataset, 
+                                function(err, result){
+                                    assert.equal(err, null);
+                                    // Step 5: send result and emit updated data to the clients.
+                                    if (result.ok === 1) {
+                                        io.emit('stockUpdated', {data: dataset});
+                                        res.send({message:'stock updated on the DB', status:'OK'});   
+                                    } else {
+                                        res.send({message:'stock NOT updated on the DB', status:'NO'});
+                                    }
+                                    db.close();
+                                });
+                            }
+                        
+                    });
+                } else {
+                    // if the response from the API was null, send status to client
+                    res.send({message:'No response from Quandl API', status:'NO', data: null});                    
+                }
+        });
+        
+    };
     
     return quandlController;    
 };

@@ -12,7 +12,6 @@ angular.module('QuandlModule')
         ioFactory.on('initialStocks', function(message){
             $scope.$apply(function(){
                $scope.stocks = message.data;
-               console.log($scope.stocks);
             });
         });
         
@@ -25,7 +24,7 @@ angular.module('QuandlModule')
         
         // listens for the stock deleted event and deletes the local copy 
         ioFactory.on('stockDeleted', function(message){
-            console.log('message received');
+            console.log('deleted stock received');
             $scope.$apply(function(){
                 $scope.stocks.forEach(function(stock, idx){
                     if (stock.id === message.data) {
@@ -34,6 +33,18 @@ angular.module('QuandlModule')
                 });                
             }); 
         });
+        
+        // listens for the stock updated event and updates the local copy 
+        ioFactory.on('stockUpdated', function(message){
+            console.log('updated stock received');
+            $scope.$apply(function(){
+                $scope.stocks.forEach(function(stock, idx){
+                    if (stock.id === message.data._id) {
+                        $scope.stocks.splice(idx, 1, message.data);
+                    }
+                });                
+            }); 
+        });        
         
         $scope.getNewStock = function() {
             quandlFactory.get({stockCode: $scope.newStocks.code})
@@ -73,5 +84,18 @@ angular.module('QuandlModule')
                             }
                         }
                     );
+        };
+        
+        $scope.updateStock = function(id, name) {
+            quandlFactory.update({stockCode: id}, {
+                stockName: name
+            }).$promise
+                .then(
+                    function(results) { 
+                        $scope.message = results.message; 
+                    },
+                    function(err){ 
+                        console.error(err);
+                });  
         };
 }]);

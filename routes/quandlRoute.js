@@ -9,5 +9,7 @@ module.exports = function(io) {
     
     router.delete('/:stockId', quandlCtrl.deleteStock);
     
+    router.put('/:stockId', quandlCtrl.updateStock);
+    
     return router;
 };

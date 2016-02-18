@@ -44,8 +44,9 @@
               <p>{{ message }}</p>
               <ul>
                 <li ng-repeat="stock in stocks">
-                  <h3>{{stock.name}}</h3>
+                  <h3>{{stock.name}} <small>{{stock.pulledDate}}</small></h3>
                   <button ng-click="deleteStock(stock._id)">remove</button>
+                  <button ng-click="updateStock(stock._id, stock.dataset_code)">update</button>
                 </li>
               </ul>
           </div>

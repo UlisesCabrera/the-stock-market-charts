@@ -6,5 +6,4 @@ angular.module('QuandlModule').factory('quandlFactory',['$resource','baseURL',
                     method: 'PUT'
                 }
            });  
-    
 }]);
