@@ -5,6 +5,8 @@ module.exports = function(io) {
     // passing the io object to the controller
     var quandlCtrl = require("../controllers/quandlController.js")(io);
     
+    router.get('/', quandlCtrl.getStocks);
+    
     router.get('/:stock', quandlCtrl.newStockData);
     
     router.delete('/:stockId', quandlCtrl.deleteStock);

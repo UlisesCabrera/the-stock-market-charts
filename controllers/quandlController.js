@@ -40,8 +40,31 @@ var query =  {
 module.exports =  function(io) {
     var quandlController = {};
     
+    quandlController.getStocks = function(req,res, next) {
+        //   Step1: connect to mongo.
+        MongoClient.connect(process.env.MONGOURI, function(err, db){
+            if (err) {
+                console.error(err);
+            //is connected to the database
+            } else {
+              // Step2: create or access the collection stocks.
+              var stocksCollection = db.collection('stocks');
+              // Step3: find all stocks and send it to the user
+              stocksCollection.find({}).toArray(function(err, stocks){
+                assert.equal(err, null);
+                if (stocks.length > 0){
+                   res.send({message:'stocks on your way', status:'OK', data: stocks});
+                } else {
+                    res.send({message:'no stocks found', status:'NO', data: null});                
+                }
+                db.close();
+            });              
+              
+            }
+        });
+    };
+    
     quandlController.newStockData = function(req, res, next) {
-        
         // the stock code comes from the client via the params object
         query.table = req.params.stock; 
         
