@@ -9,13 +9,19 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel='stylesheet' href='stylesheets/style.css' />
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-resource.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    
+    <script src="https://code.highcharts.com/stock/highstock.src.js"></script>
+    <script src="vendors/highcharts-ng/dist/highcharts-ng.js"></script>
+    
     <script>
       window.baseURL = '<%= baseURL %>'
-
     </script> 
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -29,9 +35,8 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12" ng-controller="QuandlController">   
-            
-              <h1>{{ hello }}</h1>
-              <p>Welcome to <%= title %></p>
+          
+              <highchart id="chart1" config="chartConfig"></highchart>
               
               <form ng-submit="getNewStock()">
                 <div class="form-group">
@@ -54,8 +59,7 @@
     </div>
 
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     

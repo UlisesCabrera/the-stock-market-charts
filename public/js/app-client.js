@@ -1,1 +1,1 @@
-angular.module('StockMainModule', ['ngRoute','QuandlModule'])
+angular.module('StockMainModule', ['ngRoute','QuandlModule','highcharts-ng'])

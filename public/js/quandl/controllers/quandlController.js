@@ -1,5 +1,38 @@
 angular.module('QuandlModule')
     .controller('QuandlController',['$scope','quandlFactory','ioFactory', function($scope, quandlFactory, ioFactory){
+    
+    function initChartData() {
+        $scope.stocks.forEach(function(stock, idx){
+            stock.data.forEach(function(data, idx){
+               data[0] = new Date(data[0]).getTime(); 
+            });
+            $scope.chartConfig.series.push({name: stock.dataset_code, data: stock.data });
+        });
+    }    
+    
+    $scope.chartConfig = {
+            options: {
+                chart: {
+                    zoomType: 'x'
+                },
+                rangeSelector: {
+                    enabled: true
+                },
+                navigator: {
+                    enabled: true
+                }
+            },
+            series: [],
+            title: {
+                text: 'Stock Market'
+            },
+            useHighStocks: true,
+            xAxis : {
+                type: 'datetime'
+            }
+        };
+
+
         // binded to the form
         $scope.newStocks = {
             code: ''
@@ -12,6 +45,8 @@ angular.module('QuandlModule')
         ioFactory.on('initialStocks', function(message){
             $scope.$apply(function(){
                $scope.stocks = message.data;
+               console.log('initail stock');
+               initChartData();
             });
         });
         
