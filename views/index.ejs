@@ -8,22 +8,27 @@
     <title><%= title %></title>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel='stylesheet' href='stylesheets/style.css' />
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link href="vendors/mdb/mdb.min.css" rel="stylesheet">
     
+    <!-- Material Design Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"  rel="stylesheet" >
+    
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500,300' rel='stylesheet' type='text/css'>
+    <!-- My Styles -->
+    <link rel='stylesheet' href='stylesheets/style.css' />
+    
+    <!-- Angular Core and plugins -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-resource.min.js"></script>
+    
+    <!-- sockect.io -->
     <script src="/socket.io/socket.io.js"></script>
-    
-    <script src="https://code.highcharts.com/stock/highstock.src.js"></script>
-    <script src="vendors/highcharts-ng/dist/highcharts-ng.js"></script>
-    
     <script>
       window.baseURL = '<%= baseURL %>'
     </script> 
-
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -34,38 +39,70 @@
   <body ng-app="StockMainModule">
     <div class="container">
         <div class="row">
-            <div class="col-xs-12" ng-controller="QuandlController">   
-          
-              <highchart id="chart1" config="chartConfig"></highchart>
+          <div class="col-xs-12">
+            <div class="page-header">
+              <h1 class="text-center h1-responsive">Chart the Stock Market</h1>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" ng-controller="QuandlController"> 
+            
+              <div class="alert alert-warning alert-dismissible" role="alert" ng-if="message" ng-cloak>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p ng-cloak>{{ message }}</p>
+              </div>  
               
-              <form ng-submit="getNewStock()">
-                <div class="form-group">
-                    <label for="CompanyCode">Company Code</label>
-                    <input type="text" class="form-control" id="CompanyCode" placeholder="Company Code" ng-model="newStocks.code">
+              <!-- Search Form -->
+              <div class="row">
+                <form ng-submit="getNewStock()" class="col-xs-12">
+                    <div class="row">
+                      <div class="input-field col-xs-12 input-group">
+                        <i class="fa fa-building-o prefix"></i>
+                        <input type="text" id="CompanyCode" ng-model="newStocks.code">
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-plus"></i></button>
+                        </span>                        
+                        <label for="CompanyCode">Add New Stock</label>
+                      </div>
                   </div>
-                <button type="submit" class="btn btn-success">Get Stocks</button>
-              </form>
-
-              <p>{{ message }}</p>
-              <ul>
-                <li ng-repeat="stock in stocks">
-                  <h3>{{stock.name}} <small>{{stock.pulledDate}}</small></h3>
-                  <button ng-click="deleteStock(stock._id)">remove</button>
-                  <button ng-click="updateStock(stock._id, stock.dataset_code)">update</button>
-                </li>
-              </ul>
+                </form>
+              </div>
+              
+              
+              <div class="row">
+                  <div class="col-xs-12 col-md-7">
+                    <highchart id="chart1" config="chartConfig"></highchart>
+                  </div>
+                  <div class="col-xs-12 col-md-5">
+                    <ul class="collection z-depth-2">
+                      <li class="collection-item avatar" ng-repeat="stock in stocks | orderBy:'-pulledDate'" ng-cloak>
+                          <div class="divider-new"><h4 class="title">{{ stock.dataset_code }}</h4></div>
+                          <p>{{stock.name}}
+                              <br> 
+                              <br>Last updated: {{stock.pulledDate | date:'medium' }}
+                          </p>
+                          <a href="#" class="secondary-content" ng-click="deleteStock(stock._id)"><i class="material-icons">delete</i></a>  
+                          <a href="#" class="secondary-bottom" ng-click="updateStock(stock._id, stock.dataset_code)"> <i class="material-icons">update</i></a>
+                      </li>
+                    </ul>                    
+                  </div>
+              </div>
+              
+              
+              
           </div>
         </div>
     </div>
 
-
-    
-    <!-- Latest compiled and minified JavaScript -->
+    <!-- Vendors -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="vendors/mdb/mdb.js"></script>
     
-    <script>
-
-    </script> 
+    <script src="https://code.highcharts.com/stock/highstock.src.js"></script>
+    <script src="vendors/highcharts-ng/dist/highcharts-ng.js"></script>
+    
     <!-- Sub Modules -->
     <script src="js/quandl/quandlModule.js"></script>
     

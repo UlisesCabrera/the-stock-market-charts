@@ -53,7 +53,7 @@ module.exports =  function(io) {
               stocksCollection.find({}).toArray(function(err, stocks){
                 assert.equal(err, null);
                 if (stocks.length > 0){
-                   res.send({message:'stocks on your way', status:'OK', data: stocks});
+                   res.send({message:'Stocks Added', status:'OK', data: stocks});
                 } else {
                     res.send({message:'no stocks found', status:'NO', data: null});                
                 }
@@ -102,7 +102,7 @@ module.exports =  function(io) {
                                     // insert new document
                                     stocksCollection.insert(dataset, function(err){
                                         assert.equal(err, null);
-                                        res.send({message:'new stock added to the db', status:'OK'});
+                                        res.send({message:'Stock Added', status:'OK'});
                                         io.emit('newStockAdded', {data: dataset});
                                         db.close();
                                     });                                    
@@ -139,7 +139,7 @@ module.exports =  function(io) {
                          // updates all the connected clients
                         io.emit('stockDeleted', {data: stockId});                     
                         // send response to the http request
-                        res.send({message:'stock deleted from DB' , status:'OK'});
+                        res.send({message:'Stock deleted' , status:'OK'});
                     } else {
                         res.send({message:'stock NOT deleted from DB', status:'NO'});
                     }
@@ -182,7 +182,7 @@ module.exports =  function(io) {
                                     // Step 5: send result and emit updated data to the clients.
                                     if (result.ok === 1) {
                                         io.emit('stockUpdated', {data: dataset});
-                                        res.send({message:'stock updated on the DB', status:'OK'});   
+                                        res.send({message:'Stock Updated', status:'OK'});   
                                     } else {
                                         res.send({message:'stock NOT updated on the DB', status:'NO'});
                                     }

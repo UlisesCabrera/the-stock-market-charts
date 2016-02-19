@@ -1,8 +1,32 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.input-field .prefix {
+  padding-left: 15px;
 }
 
-a {
-  color: #00B7FF;
+
+
+/* List of Stocks Styles */
+
+.divider-new {
+  margin-bottom:0px;
+  margin-top: 18px;
+}
+
+p {
+  font-size: 0.95rem;
+  line-height:1.4;
+  text-align:center;
+}
+
+.collection .collection-item.avatar .title {
+  font-size: 1.7rem;
+}
+
+.collection .collection-item.avatar {
+  padding-left:20px;
+}
+
+.secondary-bottom {
+  position:absolute;
+  left: 16px;
+  top: 16px;
 }
