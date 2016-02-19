@@ -72,7 +72,7 @@ module.exports =  function(io) {
         quandl.dataset(query, params, function(err, response){
             assert.equal(err, null);
                 // if there is a response from the API, do the following:
-                if (response) {
+                if (JSON.parse(response).dataset) {
                     
                     // Step1: connect to mongo.
                     MongoClient.connect(process.env.MONGOURI, function(err, db){
@@ -91,7 +91,7 @@ module.exports =  function(io) {
                                 assert.equal(err, null);
                                 // if it is, do nothing and send a notification to the user
                                 if (stocks.length > 0){
-                                   res.send({message:'new stock added to the db', status:'NO'});
+                                   res.send({message:'Stock Added', status:'NO'});
                                    db.close();
                                 // else insert new stock to the collection and send the new stocks collection to the user   
                                 } else {
@@ -113,7 +113,7 @@ module.exports =  function(io) {
                     });
                 } else {
                     // if the response from the API was null, send status to client
-                    res.send({message:'No response from Quandl API', status:'NO', data: null});                    
+                    res.send({message: JSON.parse(response).quandl_error.message, status:'NO', data: null});                    
                 }
         }); 
     };
