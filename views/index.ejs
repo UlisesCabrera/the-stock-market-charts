@@ -15,7 +15,6 @@
     <!-- Font Awesome -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"  rel="stylesheet" >
     
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500,300' rel='stylesheet' type='text/css'>
     <!-- My Styles -->
     <link rel='stylesheet' href='stylesheets/style.css' />
     
@@ -41,7 +40,7 @@
         <div class="row">
           <div class="col-xs-12">
             <div class="page-header">
-              <h1 class="text-center h1-responsive">Chart the Stock Market</h1>
+              <h1 class="text-center h1-responsive"><%= title %></h1>
             </div>
           </div>
         </div>
@@ -77,10 +76,10 @@
                   <div class="col-xs-12 col-md-5">
                     <ul class="collection z-depth-2">
                       <li class="collection-item avatar" ng-repeat="stock in stocks | orderBy:'-pulledDate'" ng-cloak>
-                          <div class="divider-new"><h4 class="title">{{ stock.dataset_code }}</h4></div>
+                          <div class="divider-new"><h4 class="title" style="color: {{stock.color}}">{{ stock.dataset_code }}</h4></div>
                           <p>{{stock.name}}
                               <br> 
-                              <br>Last updated: {{stock.pulledDate | date:'medium' }}
+                              <br><span class="stock-last-updated">Last updated:</span> <span class="text-danger">{{stock.pulledDate | date:'medium' }}</span>
                           </p>
                           <a href="#" class="secondary-content" ng-click="deleteStock(stock._id)"><i class="material-icons">delete</i></a>  
                           <a href="#" class="secondary-bottom" ng-click="updateStock(stock._id, stock.dataset_code)"> <i class="material-icons">update</i></a>
@@ -99,6 +98,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="vendors/mdb/mdb.js"></script>
+    <script src="vendors/randomcolor/randomColor.js"></script>
     
     <script src="https://code.highcharts.com/stock/highstock.src.js"></script>
     <script src="vendors/highcharts-ng/dist/highcharts-ng.js"></script>

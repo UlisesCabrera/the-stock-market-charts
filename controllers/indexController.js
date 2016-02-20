@@ -7,7 +7,7 @@ module.exports =  function(io) {
     var controller = {};
     
     controller.serveHome = function(req, res, next) {
-        res.render('index', { title: 'Stock Market Tracker', baseURL: process.env.BASEURL});
+        res.render('index', { title: 'Stock Watcher', baseURL: process.env.BASEURL});
     };
     
     return controller;

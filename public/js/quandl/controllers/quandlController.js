@@ -1,5 +1,14 @@
+/* global angular randomColor*/
+
 angular.module('QuandlModule')
     .controller('QuandlController',['$scope','quandlFactory','ioFactory', function($scope, quandlFactory, ioFactory){
+        
+        function addColor (array) {
+            array.forEach(function(item){
+                item.color = randomColor(); 
+            });
+        }
+        
         $scope.chartConfig = {
             options: {
                 chart: {
@@ -27,6 +36,10 @@ angular.module('QuandlModule')
             .$promise
                 .then(
                     function(results){
+                        
+                        //adds random color to array
+                        addColor(results.data);
+                        
                         $scope.stocks = results.data;
                         
                         // inits the chart after it gets the results from the database.
@@ -35,7 +48,7 @@ angular.module('QuandlModule')
                             stock.data.forEach(function(data, idx){
                                data[0] = new Date(data[0]).getTime(); 
                             });
-                         $scope.chartConfig.series.push({name: stock.dataset_code, data: stock.data });
+                         $scope.chartConfig.series.push({name: stock.dataset_code, data: stock.data, color: stock.color });
                         });
                     }, 
                     function(err){
@@ -53,7 +66,11 @@ angular.module('QuandlModule')
         // listens for newStockAddedevent and push stock the the array.
         ioFactory.on('newStockAdded', function(message){
             $scope.$apply(function(){
+                //adds random color to new stock
+                message.data.color = randomColor();
+                
                 // adds the new stock to the stocks array
+                
                 $scope.stocks.push(message.data);
                
                 //formats date on data array
@@ -62,7 +79,7 @@ angular.module('QuandlModule')
                 });
                 
                 // adds the new stock to the chart data array
-                $scope.chartConfig.series.push({name: message.data.dataset_code, data: message.data.data });
+                $scope.chartConfig.series.push({name: message.data.dataset_code, data: message.data.data, color: message.data.color });
                 
             });
         });
@@ -91,6 +108,10 @@ angular.module('QuandlModule')
             $scope.$apply(function(){
                 $scope.stocks.forEach(function(stock, idx){
                     if (stock.id === message.data._id) {
+                        
+                        //adds random color to new stock
+                        message.data.color = randomColor();
+                        
                         //updates stocks array
                         $scope.stocks.splice(idx, 1, message.data);
                         

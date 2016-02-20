@@ -30,3 +30,7 @@ p {
   left: 16px;
   top: 16px;
 }
+
+.stock-last-updated {
+  font-weight:bold;
+}
