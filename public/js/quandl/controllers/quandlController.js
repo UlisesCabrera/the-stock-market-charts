@@ -2,17 +2,20 @@
 
 angular.module('QuandlModule')
     .controller('QuandlController',['$scope','quandlFactory','ioFactory', function($scope, quandlFactory, ioFactory){
-        
+        // function to add random colors to each item of the array.
         function addColor (array) {
             array.forEach(function(item){
                 item.color = randomColor(); 
             });
         }
         
+        // chart config object
         $scope.chartConfig = {
             options: {
                 chart: {
-                    zoomType: 'x'
+                    zoomType: 'x',
+                    shadow: true,
+                    style: '{font-family: "Roboto"}'
                 },
                 rangeSelector: {
                     enabled: true
@@ -58,6 +61,10 @@ angular.module('QuandlModule')
         // binded to the form
         $scope.newStocks = {
             code: ''
+        };
+        
+        $scope.hideMessage = function() {
+            $scope.message = "";
         };
         
         // will hold stocks array of objects
@@ -122,8 +129,13 @@ angular.module('QuandlModule')
                                 message.data.data.forEach(function(data, idx){
                                     data[0] = new Date(data[0]).getTime(); 
                                 });
+                                
+                                // constructing new object to push to the chart.
+                                var updatedObject = {name: message.data.dataset_code, data: message.data.data, color: message.data.color };
+                                
                                 // makes the update
-                                $scope.chartConfig.series.splice(idx, 1, message.data.data);
+                                $scope.chartConfig.series.splice(idx, 1, updatedObject);
+                                
                             }
                         });
                     }

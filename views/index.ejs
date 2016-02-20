@@ -47,8 +47,8 @@
         <div class="row">
             <div class="col-xs-12" ng-controller="QuandlController"> 
             
-              <div class="alert alert-warning alert-dismissible" role="alert" ng-if="message" ng-cloak>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <div class="alert alert-warning alert-dismissible" role="alert" ng-show="message" ng-cloak>
+                <button type="button" ng-click="hideMessage()" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <p ng-cloak>{{ message }}</p>
               </div>  
               
@@ -93,6 +93,24 @@
           </div>
         </div>
     </div>
+    <footer class="page-footer blue center-on-small-only">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h5 class="white-text text-center">Stock Watcher</h5>
+                    <p class="grey-text text-lighten-4">Powered by Quandl API</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright text-center rgba-black-light">
+            <div class="container-fluid">
+                © 2016 Copyright: <a href="http://www.ulisescabrera.com">Ulises Cabrera</a>
+            </div>
+        </div>
+    </footer>    
+    
+    
+    
 
     <!-- Vendors -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

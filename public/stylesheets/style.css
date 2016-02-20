@@ -1,8 +1,16 @@
+body {
+  position:relative;
+  background-image: url('../images/greyzz.png');
+}
+
 .input-field .prefix {
   padding-left: 15px;
 }
 
 
+.highcharts-container{
+  margin-top:5px;
+}
 
 /* List of Stocks Styles */
 
@@ -15,6 +23,11 @@ p {
   font-size: 0.95rem;
   line-height:1.4;
   text-align:center;
+}
+
+.collection {
+  max-height: 400px;
+  overflow-y : scroll;
 }
 
 .collection .collection-item.avatar .title {
@@ -34,3 +47,18 @@ p {
 .stock-last-updated {
   font-weight:bold;
 }
+
+
+@media (min-width: 970px) {
+ footer {
+    position: fixed;
+    bottom: 0;
+    width:100%;
+  }
+  
+.collection {
+  max-height: 700px;
+}  
+
+}
+
